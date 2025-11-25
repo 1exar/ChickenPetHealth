@@ -1,0 +1,54 @@
+workflows:
+  ios_ipados_release:
+    name: iOS + iPadOS Release
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+
+    integrations:
+      app_store_connect: "CodeMagic" 
+
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.aifashion.estimator.thaman.app
+      vars:
+        XCODE_PROJECT: "ThamanAl.xcodeproj"
+        XCODE_SCHEME: "ThamanAl"
+        BUNDLE_ID: "com.aifashion.estimator.thaman.app"
+      xcode: "16.0"
+
+    scripts:
+      - name: Set up keychain for code signing
+        script: |
+          keychain initialize
+
+      - name: Add signing certificates to keychain
+        script: |
+          keychain add-certificates
+
+      - name: Increment build number
+        script: |
+          agvtool new-version -all $(($(agvtool what-version -terse)+1))
+
+      - name: Sync provisioning settings from Codemagic
+        script: |
+          xcode-project use-profiles \
+            --project "$CM_BUILD_DIR/$XCODE_PROJECT"
+
+      - name: Build ipa
+        script: |
+          xcode-project build-ipa \
+            --project "$CM_BUILD_DIR/$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: true
