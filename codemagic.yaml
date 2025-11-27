@@ -10,11 +10,11 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.aifashion.estimator.thaman.app
+        bundle_identifier: com.birdcarelog.app
       vars:
-        XCODE_PROJECT: "ThamanAl.xcodeproj"
-        XCODE_SCHEME: "ThamanAl"
-        BUNDLE_ID: "com.aifashion.estimator.thaman.app"
+        XCODE_PROJECT: "ChickenPetHealth.xcodeproj"
+        XCODE_SCHEME: "ChickenPetHealth"
+        BUNDLE_ID: "com.birdcarelog.app"
       xcode: "16.0"
 
     scripts:
