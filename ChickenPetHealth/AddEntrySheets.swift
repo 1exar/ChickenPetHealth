@@ -258,7 +258,7 @@ struct AddTreatmentSheet: View {
                 selectedBirdID = store.birds.first?.id
             }
         }
-        .onChange(of: scope) { newScope in
+        .onChange(of: scope) { _, newScope in
             if newScope == .individual, selectedBirdID == nil {
                 selectedBirdID = store.birds.first?.id
             }
