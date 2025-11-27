@@ -34,7 +34,9 @@ struct ContentView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     ContentView()
         .environmentObject(AppDataStore.preview)
 }
+#endif
