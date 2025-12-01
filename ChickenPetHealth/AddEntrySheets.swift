@@ -30,6 +30,10 @@ struct AddReminderSheet: View {
                 }
             }
             .navigationTitle("New reminder")
+            .scrollContentBackground(.hidden)
+            .background(Theme.background(for: .dark))
+            .environment(\.colorScheme, .dark)
+            .tint(Theme.accent)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -96,6 +100,10 @@ struct BirdFormSheet: View {
                 }
             }
             .navigationTitle(isEditing ? "Edit bird" : "Add bird")
+            .scrollContentBackground(.hidden)
+            .background(Theme.background(for: .dark))
+            .environment(\.colorScheme, .dark)
+            .tint(Theme.accent)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -211,6 +219,10 @@ struct AddTreatmentSheet: View {
                 }
             }
             .navigationTitle(isEditing ? "Edit treatment" : "New treatment")
+            .scrollContentBackground(.hidden)
+            .background(Theme.background(for: .dark))
+            .environment(\.colorScheme, .dark)
+            .tint(Theme.accent)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }

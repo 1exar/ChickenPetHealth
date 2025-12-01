@@ -31,19 +31,21 @@ enum AppThemeMode: String, CaseIterable, Identifiable {
 
 enum Theme {
     static func background(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color(hex: "#1B3B35") : Color(hex: "#F4FAF2")
+        scheme == .dark ? Color.black : Color(hex: "#1B3B36")
     }
 
     static func card(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color(hex: "#FFF8E1").opacity(0.12) : Color.white.opacity(0.9)
+        // Dark keeps existing tint; light uses a soft gray with transparency to match the design intent
+        scheme == .dark ? Color(hex: "#FFF8E1").opacity(0.12) : Color(hex: "#9DA7A2").opacity(0.22)
     }
 
     static func mutedText(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.7) : Color.black.opacity(0.6)
+        // Keep muted text bright enough to read on the darker palette
+        Color.white.opacity(0.82)
     }
 
     static func overlay(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? background(for: scheme).opacity(0.6) : Color.white.opacity(0.8)
+        scheme == .dark ? background(for: scheme).opacity(0.6) : Color.white.opacity(0.12)
     }
 
     static let accent = Color(hex: "#FFD93D")

@@ -30,62 +30,85 @@ struct TreatmentLogView: View {
                         }
                     }
                     .pickerStyle(.segmented)
+                    .tint(Theme.accent)
+                    .colorScheme(.dark) // Keep segment labels white on dark background
                     .listRowBackground(Theme.background(for: colorScheme))
                 }
-                Section("Records") {
-                    if store.treatments.isEmpty {
-                        Text("No treatments yet")
-                            .font(.caption)
-                            .foregroundColor(Theme.mutedText(for: colorScheme))
-                            .listRowBackground(Theme.background(for: colorScheme))
-                    } else if filteredRecords.isEmpty {
-                        Text("No entries for this filter")
-                            .font(.caption)
-                            .foregroundColor(Theme.mutedText(for: colorScheme))
-                            .listRowBackground(Theme.background(for: colorScheme))
-                    } else {
-                        ForEach(filteredRecords) { record in
-                            TreatmentRowView(
-                                record: record,
-                                isExpanded: expandedTreatmentID == record.id,
-                                onToggle: {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                        if expandedTreatmentID == record.id {
-                                            expandedTreatmentID = nil
-                                        } else {
-                                            expandedTreatmentID = record.id
-                                        }
+                Text("Records")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .listRowBackground(Theme.background(for: colorScheme))
+                    .listRowSeparator(.hidden)
+
+                if store.treatments.isEmpty {
+                    Text("No treatments yet")
+                        .font(.caption)
+                        .foregroundColor(Theme.mutedText(for: colorScheme))
+                        .listRowBackground(Theme.background(for: colorScheme))
+                        .listRowSeparator(.hidden)
+                } else if filteredRecords.isEmpty {
+                    Text("No entries for this filter")
+                        .font(.caption)
+                        .foregroundColor(Theme.mutedText(for: colorScheme))
+                        .listRowBackground(Theme.background(for: colorScheme))
+                        .listRowSeparator(.hidden)
+                } else {
+                    ForEach(filteredRecords) { record in
+                        TreatmentRowView(
+                            record: record,
+                            isExpanded: expandedTreatmentID == record.id,
+                            onToggle: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    if expandedTreatmentID == record.id {
+                                        expandedTreatmentID = nil
+                                    } else {
+                                        expandedTreatmentID = record.id
                                     }
-                                },
-                                onDelete: {
-                                    store.deleteTreatment(id: record.id)
-                                    expandedTreatmentID = nil
                                 }
-                            )
-                            .listRowBackground(Theme.card(for: colorScheme))
-                        }
+                            },
+                            onDelete: {
+                                store.deleteTreatment(id: record.id)
+                                expandedTreatmentID = nil
+                            }
+                        )
+                        .listRowBackground(Theme.card(for: colorScheme))
                     }
                 }
             }
             .scrollContentBackground(.hidden)
             .background(Theme.background(for: colorScheme))
-            .navigationTitle("Treatment log")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showAddSheet = true
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .foregroundColor(Theme.accent)
-                    }
-                    .accessibilityLabel("Add treatment")
-                }
+            .foregroundColor(.white)
+            .listStyle(.plain)
+            .toolbar(.hidden, for: .navigationBar)
+            .safeAreaInset(edge: .top) {
+                header
+                    .padding(.horizontal)
             }
         }
         .sheet(isPresented: $showAddSheet) {
             AddTreatmentSheet()
                 .environmentObject(store)
         }
+    }
+
+    private var header: some View {
+        HStack {
+            Text("Treatment log")
+                .font(.largeTitle.bold())
+                .foregroundColor(.white)
+            Spacer()
+            Button {
+                showAddSheet = true
+            } label: {
+                Image(systemName: "plus.circle.fill")
+                    .foregroundColor(Theme.accent)
+                    .padding(6)
+                    .background(Circle().stroke(Theme.accent.opacity(0.6), lineWidth: 1))
+            }
+            .accessibilityLabel("Add treatment")
+        }
+        .padding(.bottom, 6)
+        .background(Theme.background(for: colorScheme).ignoresSafeArea(edges: .top))
     }
 }
 
@@ -103,6 +126,7 @@ struct TreatmentRowView: View {
                 HStack {
                     Text(record.title)
                         .font(.headline)
+                        .foregroundColor(.white)
                     Spacer()
                     Text(record.category.rawValue)
                         .font(.caption2)
@@ -132,6 +156,7 @@ struct TreatmentRowView: View {
                 }
             }
             .padding(.vertical, 6)
+            .foregroundColor(.white)
             .contentShape(Rectangle())
             .onTapGesture {
                 if !isExpanded {

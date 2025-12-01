@@ -13,6 +13,7 @@ struct AnalyticsView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
+                    header
                     healthPieCard
                     proceduresCard
                     insightsCard
@@ -20,7 +21,16 @@ struct AnalyticsView: View {
                 .padding()
             }
             .background(Theme.background(for: colorScheme))
-            .navigationTitle("Analytics")
+            .toolbar(.hidden, for: .navigationBar)
+        }
+    }
+
+    private var header: some View {
+        HStack {
+            Text("Analytics")
+                .font(.largeTitle.bold())
+                .foregroundColor(.white)
+            Spacer()
         }
     }
 
@@ -28,6 +38,7 @@ struct AnalyticsView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Health distribution")
                 .font(.headline)
+                .foregroundColor(.white)
             HStack {
                 DoughnutChart(slices: healthSlices, size: 60)
                     .padding(.trailing, 12)
@@ -44,6 +55,7 @@ struct AnalyticsView: View {
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 24).fill(Theme.card(for: colorScheme)))
+        .foregroundColor(.white)
     }
 
     private var proceduresCard: some View {
@@ -51,14 +63,17 @@ struct AnalyticsView: View {
             HStack {
                 Text("Care procedures")
                     .font(.headline)
+                    .foregroundColor(.white)
             }
             ForEach(TreatmentCategory.allCases) { category in
                 let value = store.treatments.filter { $0.category == category }.count
                 HStack {
                     Text(category.rawValue)
+                        .foregroundColor(.white)
                     Spacer()
                     Text("\(value)")
                         .font(.headline)
+                        .foregroundColor(.white)
                 }
                 ProgressView(value: store.treatments.isEmpty ? 0 : Double(value) / Double(max(1, store.treatments.count)))
                     .tint(color(for: category))
@@ -66,12 +81,14 @@ struct AnalyticsView: View {
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 24).fill(Theme.card(for: colorScheme)))
+        .foregroundColor(.white)
     }
 
     private var insightsCard: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Assistant insights")
                 .font(.headline)
+                .foregroundColor(.white)
             Text(summaryText)
                 .font(.footnote)
                 .foregroundColor(Theme.mutedText(for: colorScheme))
@@ -90,9 +107,11 @@ struct AnalyticsView: View {
                 .frame(width: 10, height: 10)
             Text(label)
                 .font(.caption)
+                .foregroundColor(.white)
             Spacer()
             Text("\(value)")
                 .font(.caption.bold())
+                .foregroundColor(.white)
         }
     }
 

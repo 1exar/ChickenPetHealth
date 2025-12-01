@@ -13,28 +13,22 @@ struct DashboardView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    greetingCard
-                    remindersCard
-                    quickAddCard
-                    flockStatusCard
-                }
-                .padding()
-            }
-            .background(Theme.background(for: colorScheme))
-            .navigationTitle("Flock Health")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showReminderSheet = true
-                    } label: {
-                        Image(systemName: "bell.badge.fill")
-                            .foregroundColor(Theme.accent)
+            ZStack {
+                Theme.background(for: colorScheme)
+                    .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(spacing: 20) {
+                        header
+                        greetingCard
+                        remindersCard
+                        quickAddCard
+                        flockStatusCard
                     }
-                    .accessibilityLabel("Add reminder")
+                    .padding()
                 }
             }
+            .toolbar(.hidden, for: .navigationBar)
         }
         .sheet(isPresented: $showReminderSheet) {
             AddReminderSheet()
@@ -46,10 +40,29 @@ struct DashboardView: View {
         }
     }
 
+    private var header: some View {
+        HStack {
+            Text("Flock Health")
+                .font(.largeTitle.bold())
+                .foregroundColor(.white)
+            Spacer()
+            Button {
+                showReminderSheet = true
+            } label: {
+                Image(systemName: "bell.badge.fill")
+                    .foregroundColor(Theme.accent)
+                    .padding(10)
+                    .background(Circle().stroke(Theme.accent.opacity(0.6), lineWidth: 1))
+            }
+            .accessibilityLabel("Add reminder")
+        }
+    }
+
     private var greetingCard: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(store.reminders.isEmpty ? "All calm in the coop 🕊" : "You have \(store.reminders.count) reminders today")
                 .font(.title2.bold())
+                .foregroundColor(.white)
             Text("Keep logging care events to maintain a happy flock.")
                 .font(.callout)
                 .foregroundColor(Theme.mutedText(for: colorScheme))
@@ -68,6 +81,7 @@ struct DashboardView: View {
             HStack {
                 Text("Reminders")
                     .font(.headline)
+                    .foregroundColor(.white)
                 Spacer()
                 Text(Date.now, style: .date)
                     .font(.caption)
@@ -99,7 +113,7 @@ struct DashboardView: View {
             VStack(alignment: .leading) {
                 Text("Quick action")
                     .font(.subheadline)
-                    .foregroundColor(Theme.mutedText(for: colorScheme))
+                    .foregroundColor(.white)
                 Text("Log vaccine, illness, or medication in two taps.")
                     .font(.footnote)
                     .foregroundColor(Theme.mutedText(for: colorScheme))
@@ -130,6 +144,7 @@ struct DashboardView: View {
             HStack {
                 Text("Flock status")
                     .font(.headline)
+                    .foregroundColor(.white)
                 Spacer()
                 Text(colorLabel)
                     .font(.caption)
@@ -152,7 +167,7 @@ struct DashboardView: View {
                 .foregroundColor(Theme.mutedText(for: colorScheme))
             Text("\(value)")
                 .font(.title3.bold())
-                .foregroundColor(.primary)
+                .foregroundColor(.white)
         }
         .frame(maxWidth: .infinity)
         .padding()
@@ -194,6 +209,7 @@ struct ReminderRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(reminder.title)
                     .font(.subheadline.bold())
+                    .foregroundColor(.white)
                 Text("\(reminder.details)")
                     .font(.caption)
                     .foregroundColor(Theme.mutedText(for: colorScheme))

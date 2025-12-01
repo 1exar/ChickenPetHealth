@@ -25,43 +25,57 @@ struct BirdsView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    searchField
-                    speciesFilterRow
-                    if filteredBirds.isEmpty {
-                        EmptyStateView(
-                            title: "No birds logged",
-                            subtitle: "Add your first bird to start tracking health history."
-                        )
-                        .padding(.vertical, 40)
-                    } else {
-                        ForEach(filteredBirds) { bird in
-                            BirdCardView(
-                                bird: bird,
-                                isExpanded: expandedBirdID == bird.id,
-                                onToggle: {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                        expandedBirdID = expandedBirdID == bird.id ? nil : bird.id
-                                    }
-                                },
-                                onDelete: {
-                                    expandedBirdID = nil
-                                    store.deleteBird(id: bird.id)
-                                }
+            ZStack {
+                Theme.background(for: colorScheme)
+                    .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(spacing: 16) {
+                        header
+                        searchField
+                        speciesFilterRow
+                        if filteredBirds.isEmpty {
+                            EmptyStateView(
+                                title: "No birds logged",
+                                subtitle: "Add your first bird to start tracking health history."
                             )
+                            .padding(.vertical, 40)
+                        } else {
+                            ForEach(filteredBirds) { bird in
+                                BirdCardView(
+                                    bird: bird,
+                                    isExpanded: expandedBirdID == bird.id,
+                                    onToggle: {
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                            expandedBirdID = expandedBirdID == bird.id ? nil : bird.id
+                                        }
+                                    },
+                                    onDelete: {
+                                        expandedBirdID = nil
+                                        store.deleteBird(id: bird.id)
+                                    }
+                                )
+                            }
                         }
+                        addBirdButton
                     }
-                    addBirdButton
+                    .padding()
                 }
-                .padding()
             }
-            .background(Theme.background(for: colorScheme))
-            .navigationTitle("Bird Profiles")
+            .toolbar(.hidden, for: .navigationBar)
         }
         .sheet(isPresented: $showAddBird) {
             BirdFormSheet()
                 .environmentObject(store)
+        }
+    }
+
+    private var header: some View {
+        HStack {
+            Text("Bird Profiles")
+                .font(.largeTitle.bold())
+                .foregroundColor(.white)
+            Spacer()
         }
     }
 
@@ -70,7 +84,8 @@ struct BirdsView: View {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(Theme.mutedText(for: colorScheme))
             TextField("Search a bird", text: $searchText)
-                .foregroundColor(.primary)
+                .foregroundColor(.white)
+                .tint(Theme.accent)
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 16).fill(Theme.card(for: colorScheme)))
@@ -95,6 +110,7 @@ struct BirdsView: View {
                                 .stroke(selectedSpecies == nil ? Theme.accent : Color.clear, lineWidth: 1)
                         )
                 }
+                .foregroundColor(.white)
                 ForEach(BirdSpecies.allCases) { species in
                     Button {
                         selectedSpecies = species
@@ -112,7 +128,7 @@ struct BirdsView: View {
                                     .stroke(selectedSpecies == species ? Theme.accent : Color.clear, lineWidth: 1)
                             )
                     }
-                    .foregroundColor(.primary)
+                    .foregroundColor(.white)
                 }
             }
         }
@@ -154,6 +170,7 @@ struct BirdCardView: View {
                     VStack(alignment: .leading) {
                         Text(bird.name)
                             .font(.headline)
+                            .foregroundColor(.white)
                         Text(bird.shortDescription)
                             .font(.caption)
                             .foregroundColor(Theme.mutedText(for: colorScheme))
@@ -175,6 +192,7 @@ struct BirdCardView: View {
             }
             .padding()
             .background(RoundedRectangle(cornerRadius: 24).fill(Theme.card(for: colorScheme)))
+            .foregroundColor(.white)
             .contentShape(Rectangle())
             .onTapGesture {
                 if !isExpanded {

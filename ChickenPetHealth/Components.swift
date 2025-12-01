@@ -17,6 +17,7 @@ struct EmptyStateView: View {
                 .foregroundStyle(Theme.accent)
             Text(title)
                 .font(.headline)
+                .foregroundColor(.white)
             Text(subtitle)
                 .font(.footnote)
                 .multilineTextAlignment(.center)
@@ -56,6 +57,7 @@ struct Tag: View {
     var body: some View {
         Text(label)
             .font(.caption2)
+            .foregroundColor(.white)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
             .background(RoundedRectangle(cornerRadius: 10).stroke(Theme.mutedText(for: colorScheme).opacity(0.5)))
