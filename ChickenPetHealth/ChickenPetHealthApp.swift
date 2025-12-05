@@ -10,6 +10,8 @@ import SwiftUI
 @main
 struct ChickenPetHealthApp: App {
     @StateObject private var store = AppDataStore()
+    @StateObject private var gatekeeper = Gatekeeper()
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     init() {
         configureAppearance()
@@ -17,8 +19,9 @@ struct ChickenPetHealthApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
                 .environmentObject(store)
+                .environmentObject(gatekeeper)
         }
     }
 }
