@@ -1,0 +1,21 @@
+{
+  "images" : [
+    {
+      "filename" : "create-1-2d-square-frame--nice-pattern--without-te (1) 14.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

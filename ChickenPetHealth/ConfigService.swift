@@ -11,9 +11,7 @@ enum ConfigServiceError: Error {
     case endpointNotConfigured
 }
 
-/// Builds and sends requests to the config endpoint.
 final class ConfigService {
-    /// Replace with the real endpoint when backend changes.
     private let endpointString = "https://birrdheallth.com/config.php"
     private let attributionStore: AttributionDataStore
 
@@ -31,6 +29,7 @@ final class ConfigService {
 
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
+        request.timeoutInterval = 10
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = buildRequestBody(storeId: storeId, pushToken: pushToken, firebaseProjectId: firebaseProjectId)
 
