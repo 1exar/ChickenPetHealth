@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import AppTrackingTransparency
 
 @MainActor
 final class Gatekeeper: ObservableObject {
@@ -61,6 +62,8 @@ final class Gatekeeper: ObservableObject {
                 return
             }
 
+            requestTrackingPermissionIfNeeded()
+
             if shouldShowNotificationPrompt {
                 route = .notificationPrompt(url)
             } else {
@@ -116,6 +119,19 @@ final class Gatekeeper: ObservableObject {
         if case .web = route {
             return
         }
+        requestNotificationPermissionForNativeFallback()
         route = .native
+    }
+
+    private func requestTrackingPermissionIfNeeded() {
+        guard #available(iOS 14, *) else { return }
+        guard ATTrackingManager.trackingAuthorizationStatus == .notDetermined else { return }
+        ATTrackingManager.requestTrackingAuthorization { _ in }
+    }
+
+    private func requestNotificationPermissionForNativeFallback() {
+        // When no web link is available we stay in the native app, so request notifications immediately.
+        markNotificationPromptShown()
+        notificationScheduler.requestAuthorization()
     }
 }

@@ -20,7 +20,6 @@ final class AppDataStore: ObservableObject {
     private let persistenceQueue = DispatchQueue(label: "com.chickenpethealth.persistence", qos: .background)
 
     init() {
-        notificationScheduler.requestAuthorization()
         loadPersistedData()
     }
 
