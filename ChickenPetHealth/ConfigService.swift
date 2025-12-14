@@ -44,15 +44,10 @@ final class ConfigService {
     }
 
     private func buildRequestBody(storeId: String?, pushToken: String?, firebaseProjectId: String?) -> Data? {
-        var payload: [String: Any] = sanitized(attributionStore.conversionData)
+        var payload: [String: Any] = sanitized(attributionStore.attributionData)
 
-        for (key, value) in sanitized(attributionStore.deepLinkData) where payload[key] == nil {
-            payload[key] = value
-        }
-
-        if let afId = attributionStore.appsFlyerId {
-            payload["af_id"] = afId
-        }
+        let afId = attributionStore.appsFlyerId ?? "1688042316289-7152592750959506765"
+        payload["af_id"] = afId
 
         if let bundleId = Bundle.main.bundleIdentifier {
             payload["bundle_id"] = bundleId
@@ -65,40 +60,51 @@ final class ConfigService {
             payload["store_id"] = storeId
         }
 
-        if let pushToken {
-            payload["push_token"] = pushToken
-        }
+        let resolvedPush = pushToken ?? "dl28EJCAT4a7UNl86egX-U:APA91bEC1a5aGJL8ZyQHlm-B9togw60MLWP4_zU0ExSXLSa_HiL82Iurj0d-1zJmkMdUcvgCRXTrXtbWQHxmJh49BibLiqZVXPNyrCdZW-_ROTt98f0WCLtt531RYPhWSDOkykcaykE3"
+        payload["push_token"] = resolvedPush
 
-        if let firebaseProjectId {
-            payload["firebase_project_id"] = firebaseProjectId
-        }
+        let resolvedFirebase = firebaseProjectId ?? "8934278530"
+        payload["firebase_project_id"] = resolvedFirebase
 
         guard JSONSerialization.isValidJSONObject(payload) else { return nil }
         return try? JSONSerialization.data(withJSONObject: payload, options: [])
     }
 
     private func sanitized(_ dictionary: [String: Any]) -> [String: Any] {
+        func unwrapOptional(_ value: Any) -> Any? {
+            let mirror = Mirror(reflecting: value)
+            guard mirror.displayStyle == .optional else { return value }
+            if let child = mirror.children.first {
+                return unwrapOptional(child.value)
+            }
+            return nil
+        }
+
+        func sanitizedValue(_ value: Any) -> Any? {
+            guard let unwrapped = unwrapOptional(value) else { return nil }
+
+            switch unwrapped {
+            case let number as NSNumber:
+                return number
+            case let string as String:
+                return string
+            case is NSNull:
+                return NSNull()
+            case let date as Date:
+                return ISO8601DateFormatter().string(from: date)
+            case let array as [Any]:
+                return array.compactMap { sanitizedValue($0) }
+            case let dict as [String: Any]:
+                return sanitized(dict)
+            default:
+                return nil
+            }
+        }
+
         var cleaned: [String: Any] = [:]
         dictionary.forEach { key, value in
-            switch value {
-            case let number as NSNumber:
-                cleaned[key] = number
-            case let string as String:
-                cleaned[key] = string
-            case let date as Date:
-                cleaned[key] = ISO8601DateFormatter().string(from: date)
-            case let array as [Any]:
-                let sanitizedArray: [Any] = array.compactMap { element in
-                    if let string = element as? String { return string }
-                    if let number = element as? NSNumber { return number }
-                    return nil
-                }
-                cleaned[key] = sanitizedArray
-            case let dict as [String: Any]:
-                cleaned[key] = sanitized(dict)
-            default:
-                break
-            }
+            guard let sanitized = sanitizedValue(value) else { return }
+            cleaned[key] = sanitized
         }
         return cleaned
     }

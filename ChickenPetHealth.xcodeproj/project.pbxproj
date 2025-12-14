@@ -8,6 +8,7 @@
 
 /* Begin PBXFileReference section */
 		FAAF55972ED13798005C8564 /* ChickenPetHealth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChickenPetHealth.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAAF55B52ED2B100005C8564 /* ChickenPetHealth/ChickenPetHealth.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ChickenPetHealth/ChickenPetHealth.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +33,7 @@
 		FAAF558E2ED13798005C8564 = {
 			isa = PBXGroup;
 			children = (
+				FAAF55B52ED2B100005C8564 /* ChickenPetHealth/ChickenPetHealth.entitlements */,
 				FAAF55992ED13798005C8564 /* ChickenPetHealth */,
 				FAAF55982ED13798005C8564 /* Products */,
 			);
@@ -251,6 +253,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
+				CODE_SIGN_ENTITLEMENTS = ChickenPetHealth/ChickenPetHealth.entitlements;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = "";
@@ -287,6 +291,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
+				CODE_SIGN_ENTITLEMENTS = ChickenPetHealth/ChickenPetHealth.entitlements;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = "";

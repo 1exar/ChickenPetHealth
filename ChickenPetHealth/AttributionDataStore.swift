@@ -12,6 +12,10 @@ final class AttributionDataStore: ObservableObject {
     /// Raw unified deep link payload from AppsFlyer.
     @Published private(set) var deepLinkData: [String: Any] = [:]
 
+    /// Merged attribution payload for outgoing requests.
+    /// If a key is present in multiple sources, the first received value wins.
+    @Published private(set) var attributionData: [String: Any] = [:]
+
     /// AppsFlyer installation identifier (af_id).
     @Published private(set) var appsFlyerId: String?
 
@@ -20,12 +24,14 @@ final class AttributionDataStore: ObservableObject {
     func updateConversionData(_ data: [String: Any]) {
         DispatchQueue.main.async { [weak self] in
             self?.conversionData = data
+            self?.mergeFirstReceived(from: data)
         }
     }
 
     func updateDeepLinkData(_ data: [String: Any]) {
         DispatchQueue.main.async { [weak self] in
             self?.deepLinkData = data
+            self?.mergeFirstReceived(from: data)
         }
     }
 
@@ -33,5 +39,13 @@ final class AttributionDataStore: ObservableObject {
         DispatchQueue.main.async { [weak self] in
             self?.appsFlyerId = id
         }
+    }
+
+    private func mergeFirstReceived(from data: [String: Any]) {
+        var merged = attributionData
+        for (key, value) in data where merged[key] == nil {
+            merged[key] = value
+        }
+        attributionData = merged
     }
 }
