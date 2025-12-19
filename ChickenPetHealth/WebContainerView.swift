@@ -1,5 +1,5 @@
 import SwiftUI
-import WebKit
+@preconcurrency import WebKit
 import UIKit
 import UniformTypeIdentifiers
 
@@ -127,8 +127,12 @@ private final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, U
         return nil
     }
 
-    @available(iOS 18.4, *)
-    func webView(_ webView: WKWebView, runOpenPanelWith parameters: WKOpenPanelParameters, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping ([URL]?) -> Void) {
+    @objc
+    func webView(_ webView: WKWebView, runOpenPanelWith parameters: Any, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping ([URL]?) -> Void) {
+        guard #available(iOS 14.0, *) else {
+            completionHandler(nil)
+            return
+        }
         guard let presenter = presentingViewController else {
             completionHandler(nil)
             return
@@ -136,15 +140,11 @@ private final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, U
 
         filePickerCompletion = completionHandler
 
-        let contentTypes: [UTType]
-        if #available(iOS 14.0, *) {
-            contentTypes = [.image, .movie, .item]
-        } else {
-            contentTypes = [.item]
-        }
+        let allowsMultiple = (parameters as AnyObject).value(forKey: "allowsMultipleSelection") as? Bool ?? false
+        let contentTypes: [UTType] = [.image, .movie, .item]
 
         let picker = UIDocumentPickerViewController(forOpeningContentTypes: contentTypes, asCopy: true)
-        picker.allowsMultipleSelection = parameters.allowsMultipleSelection
+        picker.allowsMultipleSelection = allowsMultiple
         picker.delegate = self
         presenter.present(picker, animated: true)
     }
