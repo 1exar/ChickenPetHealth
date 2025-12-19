@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import AppTrackingTransparency
+import UserNotifications
 
 @MainActor
 final class Gatekeeper: ObservableObject {
@@ -20,7 +21,8 @@ final class Gatekeeper: ObservableObject {
     private var cancellables: Set<AnyCancellable> = []
     private var hasStarted = false
     private let minimumLoadingDuration: TimeInterval = 2
-    private let notificationPromptShownKey = "notificationPromptShown"
+    private let notificationPromptCooldownKey = "notificationPromptCooldownUntil"
+    private let notificationPromptCooldownInterval: TimeInterval = 3 * 24 * 60 * 60
     private let fallbackAfId = "1688042316289-7152592750959506765"
     private let fallbackPushToken = "dl28EJCAT4a7UNl86egX-U:APA91bEC1a5aGJL8ZyQHlm-B9togw60MLWP4_zU0ExSXLSa_HiL82Iurj0d-1zJmkMdUcvgCRXTrXtbWQHxmJh49BibLiqZVXPNyrCdZW-_ROTt98f0WCLtt531RYPhWSDOkykcaykE3"
     private let fallbackFirebaseProjectId = "8934278530"
@@ -70,8 +72,8 @@ final class Gatekeeper: ObservableObject {
             requestTrackingPermissionIfNeeded()
 
             let finalURL = appendDeepLinkParams(to: url)
-
-            if shouldShowNotificationPrompt {
+            let notificationStatus = await notificationScheduler.authorizationStatus()
+            if shouldShowNotificationPrompt(for: notificationStatus) {
                 route = .notificationPrompt(finalURL)
             } else {
                 route = .web(finalURL)
@@ -91,9 +93,19 @@ final class Gatekeeper: ObservableObject {
     }
 
     func openWebAfterNotificationPrompt(url: URL, requestPermission: Bool) {
-        markNotificationPromptShown()
         if requestPermission {
-            notificationScheduler.requestAuthorization()
+            notificationScheduler.requestAuthorization { [weak self] granted, status in
+                guard let self else { return }
+                Task { @MainActor in
+                    if granted || self.isAuthorized(status: status) {
+                        self.clearNotificationPromptCooldown()
+                    } else {
+                        self.setNotificationPromptCooldown()
+                    }
+                }
+            }
+        } else {
+            setNotificationPromptCooldown()
         }
         route = .web(url)
     }
@@ -114,12 +126,29 @@ final class Gatekeeper: ObservableObject {
         }
     }
 
-    private var shouldShowNotificationPrompt: Bool {
-        UserDefaults.standard.bool(forKey: notificationPromptShownKey) == false
+    private func shouldShowNotificationPrompt(for status: UNAuthorizationStatus) -> Bool {
+        if isAuthorized(status: status) { return false }
+
+        if let cooldownDate = nextNotificationPromptDate, Date() < cooldownDate {
+            return false
+        }
+
+        return true
     }
 
-    private func markNotificationPromptShown() {
-        UserDefaults.standard.set(true, forKey: notificationPromptShownKey)
+    private func setNotificationPromptCooldown() {
+        let nextDate = Date().addingTimeInterval(notificationPromptCooldownInterval)
+        UserDefaults.standard.set(nextDate.timeIntervalSince1970, forKey: notificationPromptCooldownKey)
+    }
+
+    private func clearNotificationPromptCooldown() {
+        UserDefaults.standard.removeObject(forKey: notificationPromptCooldownKey)
+    }
+
+    private var nextNotificationPromptDate: Date? {
+        let timestamp = UserDefaults.standard.double(forKey: notificationPromptCooldownKey)
+        guard timestamp > 0 else { return nil }
+        return Date(timeIntervalSince1970: timestamp)
     }
 
     private func handleFailure() {
@@ -138,8 +167,16 @@ final class Gatekeeper: ObservableObject {
 
     private func requestNotificationPermissionForNativeFallback() {
         // When no web link is available we stay in the native app, so request notifications immediately.
-        markNotificationPromptShown()
         notificationScheduler.requestAuthorization()
+    }
+
+    private func isAuthorized(status: UNAuthorizationStatus) -> Bool {
+        switch status {
+        case .authorized, .provisional, .ephemeral:
+            return true
+        default:
+            return false
+        }
     }
 
     private func appendDeepLinkParams(to url: URL) -> URL {

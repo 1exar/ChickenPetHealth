@@ -8,6 +8,7 @@
 import SwiftUI
 
 @main
+@MainActor
 struct ChickenPetHealthApp: App {
     @StateObject private var store = AppDataStore()
     @StateObject private var gatekeeper = Gatekeeper()

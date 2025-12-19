@@ -6,6 +6,12 @@
 import SwiftUI
 import Combine
 
+private struct PersistedState: Codable {
+    var birds: [Bird]
+    var reminders: [Reminder]
+    var treatments: [TreatmentRecord]
+}
+
 final class AppDataStore: ObservableObject {
     @Published private(set) var birds: [Bird] = []
     @Published private(set) var reminders: [Reminder] = []
@@ -154,12 +160,6 @@ extension AppDataStore {
 #endif
 
 private extension AppDataStore {
-    struct PersistedState: Codable {
-        var birds: [Bird]
-        var reminders: [Reminder]
-        var treatments: [TreatmentRecord]
-    }
-
     func loadPersistedData() {
         guard FileManager.default.fileExists(atPath: persistenceURL.path) else { return }
         do {

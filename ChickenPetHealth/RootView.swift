@@ -111,8 +111,6 @@ private struct NotificationPromptView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let bottomHeight = proxy.size.height * 0.55 + proxy.safeAreaInsets.bottom + 40
-
             ZStack {
                 Image("loadingbg")
                     .resizable()

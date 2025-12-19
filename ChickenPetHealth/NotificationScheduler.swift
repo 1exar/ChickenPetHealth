@@ -9,12 +9,24 @@ import UserNotifications
 final class NotificationScheduler {
     private let center = UNUserNotificationCenter.current()
 
-    func requestAuthorization() {
+    func requestAuthorization(completion: ((Bool, UNAuthorizationStatus) -> Void)? = nil) {
         center.requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+            self.center.getNotificationSettings { settings in
+                completion?(granted, settings.authorizationStatus)
+            }
+
             if let error {
                 print("Notification permission error: \(error.localizedDescription)")
             } else if !granted {
                 print("Notification permission denied.")
+            }
+        }
+    }
+
+    func authorizationStatus() async -> UNAuthorizationStatus {
+        await withCheckedContinuation { continuation in
+            center.getNotificationSettings { settings in
+                continuation.resume(returning: settings.authorizationStatus)
             }
         }
     }
