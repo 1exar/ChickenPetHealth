@@ -7,8 +7,10 @@ struct WebContainerView: View {
     let url: URL
 
     var body: some View {
-        WebView(url: url)
-            .ignoresSafeArea()
+        ZStack {
+            Color.black.ignoresSafeArea()
+            WebView(url: url)
+        }
     }
 }
 
@@ -44,7 +46,10 @@ private struct WebView: UIViewRepresentable {
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.allowsBackForwardNavigationGestures = true
-        webView.scrollView.contentInsetAdjustmentBehavior = .never
+        webView.scrollView.contentInsetAdjustmentBehavior = .automatic
+        webView.isOpaque = false
+        webView.backgroundColor = .black
+        webView.scrollView.backgroundColor = .black
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
         webView.scrollView.pinchGestureRecognizer?.isEnabled = false
@@ -188,8 +193,8 @@ private final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, U
     private func updateSafeAreaInsets() {
         guard let webView else { return }
         let insets = keyWindow?.safeAreaInsets ?? webView.safeAreaInsets
-        webView.scrollView.contentInset = UIEdgeInsets(top: insets.top, left: 0, bottom: insets.bottom, right: 0)
-        webView.scrollView.scrollIndicatorInsets = webView.scrollView.contentInset
+        webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: insets.bottom, right: 0)
+        webView.scrollView.scrollIndicatorInsets = UIEdgeInsets(top: insets.top, left: 0, bottom: insets.bottom, right: 0)
     }
 
     private func shouldOpenExternally(_ url: URL) -> Bool {
