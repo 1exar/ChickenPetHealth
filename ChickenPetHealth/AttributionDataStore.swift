@@ -5,6 +5,7 @@ import Combine
 /// These fields stay extremely lightweight so we can ship the gray gate quickly without the SDK.
 final class AttributionDataStore: ObservableObject {
     static let shared = AttributionDataStore()
+    private let appsFlyerIdKey = "AttributionDataStore.appsFlyerId"
 
     /// Raw conversion data from AppsFlyer callback.
     @Published private(set) var conversionData: [String: Any] = [:]
@@ -19,7 +20,9 @@ final class AttributionDataStore: ObservableObject {
     /// AppsFlyer installation identifier (af_id).
     @Published private(set) var appsFlyerId: String?
 
-    private init() {}
+    private init() {
+        appsFlyerId = UserDefaults.standard.string(forKey: appsFlyerIdKey)
+    }
 
     func updateConversionData(_ data: [String: Any]) {
         DispatchQueue.main.async { [weak self] in
@@ -38,7 +41,26 @@ final class AttributionDataStore: ObservableObject {
     func updateAppsFlyerId(_ id: String?) {
         DispatchQueue.main.async { [weak self] in
             self?.appsFlyerId = id
+            if let id, id.isEmpty == false {
+                UserDefaults.standard.set(id, forKey: self?.appsFlyerIdKey ?? "")
+            }
         }
+    }
+
+    /// Returns an existing AF id or generates a unique, persisted fallback to keep notification flows working when the SDK is absent.
+    func ensureAppsFlyerId() -> String {
+        if let current = appsFlyerId, current.isEmpty == false {
+            return current
+        }
+
+        if let stored = UserDefaults.standard.string(forKey: appsFlyerIdKey), stored.isEmpty == false {
+            appsFlyerId = stored
+            return stored
+        }
+
+        let generated = "af-\(UUID().uuidString.lowercased())"
+        updateAppsFlyerId(generated)
+        return generated
     }
 
     private func mergeFirstReceived(from data: [String: Any]) {

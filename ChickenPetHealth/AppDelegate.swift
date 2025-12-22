@@ -1,4 +1,5 @@
 import UIKit
+import UserNotifications
 
 #if canImport(AppsFlyerLib)
 import AppsFlyerLib
@@ -6,7 +7,10 @@ import AppsFlyerLib
 
 /// Minimal AppDelegate to host future AppsFlyer callbacks.
 final class AppDelegate: UIResponder, UIApplicationDelegate {
+    private let notificationScheduler = NotificationScheduler()
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        notificationScheduler.registerForRemoteNotificationsIfAuthorized()
         AppsFlyerManager.shared.start(with: launchOptions)
         return true
     }
@@ -22,12 +26,25 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         return AppsFlyerManager.shared.handleUserActivity(userActivity)
     }
+
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let tokenString = deviceToken.map { String(format: "%02x", $0) }.joined()
+        PushTokenStore.shared.update(token: tokenString)
+        #if canImport(AppsFlyerLib)
+        AppsFlyerLib.shared().registerUninstall(deviceToken)
+        #endif
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Remote notification registration failed: \(error.localizedDescription)")
+    }
 }
 
 /// Wrapper that becomes a no-op until the AppsFlyer SDK is added to the project.
 final class AppsFlyerManager: NSObject {
     static let shared = AppsFlyerManager()
     private var didStart = false
+    private let customerUserIdKey = "AppsFlyerManager.customerUserId"
 
     private override init() {}
 
@@ -35,13 +52,15 @@ final class AppsFlyerManager: NSObject {
         #if canImport(AppsFlyerLib)
         let lib = AppsFlyerLib.shared()
 
-        let devKey = (Bundle.main.object(forInfoDictionaryKey: "AppsFlyerDevKey") as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let devKey = (Bundle.main.object(forInfoDictionaryKey: "AppsFlyerDevKey") as? String)?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
             ?? "fxSHnri96hoMwze37MFpqn"
-        let appId = ((Bundle.main.object(forInfoDictionaryKey: "AppleAppID") as? String)?.trimmingCharacters(in: .whitespacesAndNewlines))
+        let appId = (Bundle.main.object(forInfoDictionaryKey: "AppleAppID") as? String)?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
             ?? "id6755790499"
 
         guard
-            let devKey, !devKey.isEmpty, devKey.contains("<#") == false,
+            !devKey.isEmpty, devKey.contains("<#") == false,
             !appId.isEmpty, appId.contains("<#") == false
         else {
             return
@@ -49,9 +68,14 @@ final class AppsFlyerManager: NSObject {
 
         lib.appsFlyerDevKey = devKey
         lib.appleAppID = appId
+        #if DEBUG
+        lib.isDebug = true
+        #else
         lib.isDebug = false
+        #endif
         lib.delegate = self
         lib.deepLinkDelegate = self
+        lib.customerUserID = resolveCustomerUserId()
 
         if #available(iOS 14.0, *) {
             lib.waitForATTUserAuthorization(timeoutInterval: 60)
@@ -115,6 +139,15 @@ final class AppsFlyerManager: NSObject {
             AttributionDataStore.shared.updateDeepLinkData(payload)
         }
     }
+
+    private func resolveCustomerUserId() -> String {
+        if let stored = UserDefaults.standard.string(forKey: customerUserIdKey), stored.isEmpty == false {
+            return stored
+        }
+        let generated = UUID().uuidString.lowercased()
+        UserDefaults.standard.set(generated, forKey: customerUserIdKey)
+        return generated
+    }
 }
 
 #if canImport(AppsFlyerLib)
@@ -133,7 +166,7 @@ extension AppsFlyerManager: AppsFlyerLibDelegate, DeepLinkDelegate {
 
     func onDeepLinking(_ result: DeepLinkResult) {
         switch result.status {
-        case .found, .success:
+        case .found:
             guard let deepLink = result.deepLink else { return }
             AttributionDataStore.shared.updateDeepLinkData(deepLink.toPayload())
         case .failure, .notFound:
@@ -148,44 +181,40 @@ private extension DeepLink {
     func toPayload() -> [String: Any] {
         var payload: [String: Any] = [:]
 
-        if let clickEvent = clickEvent {
+        if let clickEvent = value(forKey: "clickEvent") as? [AnyHashable: Any] {
             for (key, value) in clickEvent {
                 if let key = key as? String {
                     payload[key] = value
                 }
             }
-        } else {
-            for (key, value) in toDictionary() {
-                payload[key] = value
+        }
+
+        let mappings: [(key: String, kvc: String)] = [
+            ("deep_link_value", "deepLinkValue"),
+            ("deep_link_sub1", "deepLinkSub1"),
+            ("deep_link_sub2", "deepLinkSub2"),
+            ("deep_link_sub3", "deepLinkSub3"),
+            ("deep_link_sub4", "deepLinkSub4"),
+            ("deep_link_sub5", "deepLinkSub5"),
+            ("match_type", "matchType"),
+            ("media_source", "mediaSource"),
+            ("campaign", "campaign"),
+            ("campaign_id", "campaignId"),
+            ("af_sub1", "afSub1"),
+            ("af_sub2", "afSub2"),
+            ("af_sub3", "afSub3"),
+            ("af_sub4", "afSub4"),
+            ("af_sub5", "afSub5")
+        ]
+
+        for mapping in mappings where payload[mapping.key] == nil {
+            if let value = value(forKey: mapping.kvc) {
+                payload[mapping.key] = value
             }
         }
 
-        if payload["deep_link_value"] == nil, let value = deepLinkValue {
-            payload["deep_link_value"] = value
-        }
-
-        if payload["deep_link_sub1"] == nil, let value = deepLinkSub1 {
-            payload["deep_link_sub1"] = value
-        }
-
-        if payload["deep_link_sub2"] == nil, let value = deepLinkSub2 {
-            payload["deep_link_sub2"] = value
-        }
-
-        if payload["deep_link_sub3"] == nil, let value = deepLinkSub3 {
-            payload["deep_link_sub3"] = value
-        }
-
-        if payload["deep_link_sub4"] == nil, let value = deepLinkSub4 {
-            payload["deep_link_sub4"] = value
-        }
-
-        if payload["deep_link_sub5"] == nil, let value = deepLinkSub5 {
-            payload["deep_link_sub5"] = value
-        }
-
-        if payload["is_deferred"] == nil {
-            payload["is_deferred"] = isDeferred
+        if payload["is_deferred"] == nil, let deferred = value(forKey: "isDeferred") {
+            payload["is_deferred"] = deferred
         }
 
         return payload

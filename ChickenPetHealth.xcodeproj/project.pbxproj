@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D0C0A0032F123456789ABCDE /* AppsFlyerLib in Frameworks */ = {isa = PBXBuildFile; productRef = D0C0A0022F123456789ABCDE /* AppsFlyerLib */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		FAAF55972ED13798005C8564 /* ChickenPetHealth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChickenPetHealth.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAAF55B52ED2B100005C8564 /* ChickenPetHealth/ChickenPetHealth.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ChickenPetHealth/ChickenPetHealth.entitlements; sourceTree = "<group>"; };
@@ -24,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0C0A0032F123456789ABCDE /* AppsFlyerLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,6 +72,7 @@
 			);
 			name = ChickenPetHealth;
 			packageProductDependencies = (
+				D0C0A0022F123456789ABCDE /* AppsFlyerLib */,
 			);
 			productName = ChickenPetHealth;
 			productReference = FAAF55972ED13798005C8564 /* ChickenPetHealth.app */;
@@ -96,6 +102,9 @@
 			);
 			mainGroup = FAAF558E2ED13798005C8564;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D0C0A0012F123456789ABCDE /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FAAF55982ED13798005C8564 /* Products */;
 			projectDirPath = "";
@@ -162,7 +171,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = X54M3LT46X;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -226,7 +235,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = X54M3LT46X;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -261,6 +270,8 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_AppleAppID = id6755790499;
+				INFOPLIST_KEY_AppsFlyerDevKey = fxSHnri96hoMwze37MFpqn;
 				INFOPLIST_KEY_CFBundleDisplayName = "Bird Care Log";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Allow camera access to capture and upload photos.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow photo library access to choose images to upload.";
@@ -302,6 +313,8 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_AppleAppID = id6755790499;
+				INFOPLIST_KEY_AppsFlyerDevKey = fxSHnri96hoMwze37MFpqn;
 				INFOPLIST_KEY_CFBundleDisplayName = "Bird Care Log";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Allow camera access to capture and upload photos.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow photo library access to choose images to upload.";
@@ -352,6 +365,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D0C0A0012F123456789ABCDE /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AppsFlyerSDK/AppsFlyerFramework.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.12.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D0C0A0022F123456789ABCDE /* AppsFlyerLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0C0A0012F123456789ABCDE /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */;
+			productName = AppsFlyerLib;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FAAF558F2ED13798005C8564 /* Project object */;
 }

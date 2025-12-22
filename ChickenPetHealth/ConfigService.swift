@@ -46,7 +46,7 @@ final class ConfigService {
     private func buildRequestBody(storeId: String?, pushToken: String?, firebaseProjectId: String?) -> Data? {
         var payload: [String: Any] = sanitized(attributionStore.attributionData)
 
-        let afId = attributionStore.appsFlyerId ?? "1688042316289-7152592750959506765"
+        let afId = attributionStore.ensureAppsFlyerId()
         payload["af_id"] = afId
 
         if let bundleId = Bundle.main.bundleIdentifier {

@@ -27,6 +27,8 @@ private struct WebView: UIViewRepresentable {
         let preferences = WKWebpagePreferences()
         preferences.preferredContentMode = .mobile
         configuration.defaultWebpagePreferences = preferences
+        configuration.allowsInlineMediaPlayback = true
+        configuration.mediaTypesRequiringUserActionForPlayback = .all
 
         // Prevent zooming when keyboard appears by locking viewport scale.
         let viewportScript = """

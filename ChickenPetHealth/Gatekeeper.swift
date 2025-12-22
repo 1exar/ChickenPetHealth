@@ -17,13 +17,13 @@ final class Gatekeeper: ObservableObject {
 
     private let configService: ConfigService
     private let attributionStore: AttributionDataStore
+    private let pushTokenStore: PushTokenStore
     private let notificationScheduler = NotificationScheduler()
     private var cancellables: Set<AnyCancellable> = []
     private var hasStarted = false
     private let minimumLoadingDuration: TimeInterval = 2
     private let notificationPromptCooldownKey = "notificationPromptCooldownUntil"
     private let notificationPromptCooldownInterval: TimeInterval = 3 * 24 * 60 * 60
-    private let fallbackAfId = "1688042316289-7152592750959506765"
     private let fallbackPushToken = "dl28EJCAT4a7UNl86egX-U:APA91bEC1a5aGJL8ZyQHlm-B9togw60MLWP4_zU0ExSXLSa_HiL82Iurj0d-1zJmkMdUcvgCRXTrXtbWQHxmJh49BibLiqZVXPNyrCdZW-_ROTt98f0WCLtt531RYPhWSDOkykcaykE3"
     private let fallbackFirebaseProjectId = "8934278530"
 
@@ -31,15 +31,30 @@ final class Gatekeeper: ObservableObject {
     var pushToken: String?
     var firebaseProjectId: String?
 
-    init(configService: ConfigService = ConfigService(), attributionStore: AttributionDataStore = .shared) {
+    init(
+        configService: ConfigService = ConfigService(),
+        attributionStore: AttributionDataStore = .shared,
+        pushTokenStore: PushTokenStore = .shared
+    ) {
         self.configService = configService
         self.attributionStore = attributionStore
+        self.pushTokenStore = pushTokenStore
+        self.pushToken = pushTokenStore.token
 
         attributionStore.$conversionData
             .combineLatest(attributionStore.$deepLinkData, attributionStore.$appsFlyerId)
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sink { [weak self] _, _, _ in
                 Task { await self?.refreshConfig() }
+            }
+            .store(in: &cancellables)
+
+        pushTokenStore.$token
+            .removeDuplicates()
+            .sink { [weak self] token in
+                guard let self else { return }
+                self.pushToken = token
+                Task { await self.refreshConfig() }
             }
             .store(in: &cancellables)
     }
@@ -256,7 +271,7 @@ final class Gatekeeper: ObservableObject {
 
         // extra_param_7 bundle (af_id & campaign info)
         if hasItem(named: "extra_param_7") == false {
-            let afId = firstValue(for: ["af_id"]) ?? attributionStore.appsFlyerId ?? fallbackAfId
+            let afId = firstValue(for: ["af_id"]) ?? attributionStore.appsFlyerId ?? attributionStore.ensureAppsFlyerId()
             let agency = firstValue(for: ["agency"])
             let campaign = firstValue(for: ["campaign"])
             let campaignId = firstValue(for: ["campaign_id"])
@@ -293,7 +308,7 @@ final class Gatekeeper: ObservableObject {
         }
 
         // Client-side extra params to mirror request body for tester pages.
-        let resolvedAfId = attributionStore.appsFlyerId ?? fallbackAfId
+        let resolvedAfId = attributionStore.appsFlyerId ?? attributionStore.ensureAppsFlyerId()
         addItem(name: "af_id", value: resolvedAfId)
         if let bundleId = Bundle.main.bundleIdentifier {
             addItem(name: "bundle_id", value: bundleId)

@@ -5,6 +5,7 @@
 
 import Foundation
 import UserNotifications
+import UIKit
 
 final class NotificationScheduler {
     private let center = UNUserNotificationCenter.current()
@@ -12,6 +13,11 @@ final class NotificationScheduler {
     func requestAuthorization(completion: ((Bool, UNAuthorizationStatus) -> Void)? = nil) {
         center.requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             self.center.getNotificationSettings { settings in
+                if granted || self.isAuthorized(status: settings.authorizationStatus) {
+                    DispatchQueue.main.async {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    }
+                }
                 completion?(granted, settings.authorizationStatus)
             }
 
@@ -19,6 +25,15 @@ final class NotificationScheduler {
                 print("Notification permission error: \(error.localizedDescription)")
             } else if !granted {
                 print("Notification permission denied.")
+            }
+        }
+    }
+
+    func registerForRemoteNotificationsIfAuthorized() {
+        center.getNotificationSettings { settings in
+            guard self.isAuthorized(status: settings.authorizationStatus) else { return }
+            DispatchQueue.main.async {
+                UIApplication.shared.registerForRemoteNotifications()
             }
         }
     }
@@ -51,5 +66,16 @@ final class NotificationScheduler {
 
     func cancel(reminderID: UUID) {
         center.removePendingNotificationRequests(withIdentifiers: [reminderID.uuidString])
+    }
+}
+
+private extension NotificationScheduler {
+    func isAuthorized(status: UNAuthorizationStatus) -> Bool {
+        switch status {
+        case .authorized, .provisional, .ephemeral:
+            return true
+        default:
+            return false
+        }
     }
 }
