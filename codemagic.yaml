@@ -26,10 +26,6 @@ workflows:
         script: |
           keychain add-certificates
 
-      - name: Increment build number
-        script: |
-          agvtool new-version -all $(($(agvtool what-version -terse)+1))
-
       - name: Sync provisioning settings from Codemagic
         script: |
           xcode-project use-profiles \
