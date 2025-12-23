@@ -11,6 +11,9 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.birdcarelog.app
+        # Include app extension so Codemagic fetches profiles for both targets.
+        additional_bundle_identifiers:
+          - com.birdcarelog.app.NotificationService
       vars:
         XCODE_PROJECT: "ChickenPetHealth.xcodeproj"
         XCODE_SCHEME: "ChickenPetHealth"
