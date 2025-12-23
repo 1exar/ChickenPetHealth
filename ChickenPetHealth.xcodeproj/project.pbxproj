@@ -7,10 +7,41 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D0C0A0032F123456789ABCDE /* AppsFlyerLib in Frameworks */ = {isa = PBXBuildFile; productRef = D0C0A0022F123456789ABCDE /* AppsFlyerLib */; };
+		C6D16CF52EFB3B2E00F3B42D /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = C6D16CF42EFB3B2E00F3B42D /* FirebaseMessaging */; };
+		C6D16CF72EFB3EC800F3B42D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C6D16CF62EFB3EC800F3B42D /* GoogleService-Info.plist */; };
+		C6D170032EFB4C7D00F3B42D /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D170022EFB4C7D00F3B42D /* NotificationService.swift */; };
+		C6D1700B2EFB4CAC00F3B42D /* NotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C6D170012EFB4C7D00F3B42D /* NotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		C6D1700E2EFB4CAC00F3B42D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FAAF558F2ED13798005C8564 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C6D170042EFB4C7D00F3B42D;
+			remoteInfo = NotificationService;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C6D1700F2EFB4CAC00F3B42D /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C6D1700B2EFB4CAC00F3B42D /* NotificationService.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		C6D16CF62EFB3EC800F3B42D /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C6D170012EFB4C7D00F3B42D /* NotificationService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6D170022EFB4C7D00F3B42D /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		C6D170092EFB4C9600F3B42D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FAAF55972ED13798005C8564 /* ChickenPetHealth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChickenPetHealth.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAAF55B52ED2B100005C8564 /* ChickenPetHealth/ChickenPetHealth.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ChickenPetHealth/ChickenPetHealth.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -24,23 +55,49 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C6D170082EFB4C7D00F3B42D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FAAF55942ED13798005C8564 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D0C0A0032F123456789ABCDE /* AppsFlyerLib in Frameworks */,
+				C6D16CF52EFB3B2E00F3B42D /* FirebaseMessaging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C6D16CF32EFB3B2E00F3B42D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C6D170062EFB4C7D00F3B42D /* NotificationServiceExtension */ = {
+			isa = PBXGroup;
+			children = (
+				C6D170022EFB4C7D00F3B42D /* NotificationService.swift */,
+				C6D170092EFB4C9600F3B42D /* Info.plist */,
+			);
+			path = NotificationServiceExtension;
+			sourceTree = "<group>";
+		};
 		FAAF558E2ED13798005C8564 = {
 			isa = PBXGroup;
 			children = (
 				FAAF55B52ED2B100005C8564 /* ChickenPetHealth/ChickenPetHealth.entitlements */,
 				FAAF55992ED13798005C8564 /* ChickenPetHealth */,
+				C6D16CF32EFB3B2E00F3B42D /* Frameworks */,
 				FAAF55982ED13798005C8564 /* Products */,
+				C6D16CF62EFB3EC800F3B42D /* GoogleService-Info.plist */,
+				C6D170062EFB4C7D00F3B42D /* NotificationServiceExtension */,
 			);
 			sourceTree = "<group>";
 		};
@@ -48,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				FAAF55972ED13798005C8564 /* ChickenPetHealth.app */,
+				C6D170012EFB4C7D00F3B42D /* NotificationService.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -55,6 +113,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		C6D170042EFB4C7D00F3B42D /* NotificationService */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C6D1700A2EFB4C8F00F3B42D /* Build configuration list for PBXNativeTarget "NotificationService" */;
+			buildPhases = (
+				C6D170072EFB4C7D00F3B42D /* Sources */,
+				C6D170082EFB4C7D00F3B42D /* Frameworks */,
+				C6D170092EFB4C7D00F3B42D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NotificationService;
+			productName = NotificationService;
+			productReference = C6D170012EFB4C7D00F3B42D /* NotificationService.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		FAAF55962ED13798005C8564 /* ChickenPetHealth */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FAAF55A22ED1379A005C8564 /* Build configuration list for PBXNativeTarget "ChickenPetHealth" */;
@@ -62,17 +137,19 @@
 				FAAF55932ED13798005C8564 /* Sources */,
 				FAAF55942ED13798005C8564 /* Frameworks */,
 				FAAF55952ED13798005C8564 /* Resources */,
+				C6D1700F2EFB4CAC00F3B42D /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C6D170102EFB4CAC00F3B42D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				FAAF55992ED13798005C8564 /* ChickenPetHealth */,
 			);
 			name = ChickenPetHealth;
 			packageProductDependencies = (
-				D0C0A0022F123456789ABCDE /* AppsFlyerLib */,
+				C6D16CF42EFB3B2E00F3B42D /* FirebaseMessaging */,
 			);
 			productName = ChickenPetHealth;
 			productReference = FAAF55972ED13798005C8564 /* ChickenPetHealth.app */;
@@ -88,6 +165,9 @@
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					C6D170042EFB4C7D00F3B42D = {
+						CreatedOnToolsVersion = 16.0;
+					};
 					FAAF55962ED13798005C8564 = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
@@ -103,7 +183,7 @@
 			mainGroup = FAAF558E2ED13798005C8564;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				D0C0A0012F123456789ABCDE /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */,
+				C6D16CF22EFB39B600F3B42D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FAAF55982ED13798005C8564 /* Products */;
@@ -111,21 +191,38 @@
 			projectRoot = "";
 			targets = (
 				FAAF55962ED13798005C8564 /* ChickenPetHealth */,
+				C6D170042EFB4C7D00F3B42D /* NotificationService */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		FAAF55952ED13798005C8564 /* Resources */ = {
+		C6D170092EFB4C7D00F3B42D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FAAF55952ED13798005C8564 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6D16CF72EFB3EC800F3B42D /* GoogleService-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C6D170072EFB4C7D00F3B42D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6D170032EFB4C7D00F3B42D /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FAAF55932ED13798005C8564 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -135,7 +232,69 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		C6D170102EFB4CAC00F3B42D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C6D170042EFB4C7D00F3B42D /* NotificationService */;
+			targetProxy = C6D1700E2EFB4CAC00F3B42D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		C6D1700B2EFB4C8F00F3B42D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.birdcarelog.app.NotificationService;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		C6D1700C2EFB4C8F00F3B42D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.birdcarelog.app.NotificationService;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		FAAF55A02ED1379A005C8564 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -271,13 +430,13 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_AppleAppID = id6755790499;
-				INFOPLIST_KEY_AppsFlyerDevKey = fxSHnri96hoMwze37MFpqn;
 				INFOPLIST_KEY_CFBundleDisplayName = "Bird Care Log";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Allow camera access to capture and upload photos.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow photo library access to choose images to upload.";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We request permission to use your device ID so we can measure performance and keep the experience relevant.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIBackgroundModes = "remote-notification";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -314,13 +473,13 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_AppleAppID = id6755790499;
-				INFOPLIST_KEY_AppsFlyerDevKey = fxSHnri96hoMwze37MFpqn;
 				INFOPLIST_KEY_CFBundleDisplayName = "Bird Care Log";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Allow camera access to capture and upload photos.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow photo library access to choose images to upload.";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We request permission to use your device ID so we can measure performance and keep the experience relevant.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIBackgroundModes = "remote-notification";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -346,6 +505,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C6D1700A2EFB4C8F00F3B42D /* Build configuration list for PBXNativeTarget "NotificationService" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C6D1700B2EFB4C8F00F3B42D /* Debug */,
+				C6D1700C2EFB4C8F00F3B42D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		FAAF55922ED13798005C8564 /* Build configuration list for PBXProject "ChickenPetHealth" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -367,21 +535,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		D0C0A0012F123456789ABCDE /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */ = {
+		C6D16CF22EFB39B600F3B42D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/AppsFlyerSDK/AppsFlyerFramework.git";
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 6.12.0;
+				minimumVersion = 12.7.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D0C0A0022F123456789ABCDE /* AppsFlyerLib */ = {
+		C6D16CF42EFB3B2E00F3B42D /* FirebaseMessaging */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D0C0A0012F123456789ABCDE /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */;
-			productName = AppsFlyerLib;
+			package = C6D16CF22EFB39B600F3B42D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

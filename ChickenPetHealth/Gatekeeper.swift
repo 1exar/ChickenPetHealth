@@ -16,11 +16,12 @@ final class Gatekeeper: ObservableObject {
     @Published var loadingError: Bool = false
 
     private let configService: ConfigService
-    private let attributionStore: AttributionDataStore
     private let pushTokenStore: PushTokenStore
+    private let notificationLinkStore = NotificationLinkStore.shared
     private let notificationScheduler = NotificationScheduler()
     private var cancellables: Set<AnyCancellable> = []
     private var hasStarted = false
+    private var isUsingNotificationURL = false
     private let minimumLoadingDuration: TimeInterval = 2
     private let notificationPromptCooldownKey = "notificationPromptCooldownUntil"
     private let notificationPromptCooldownInterval: TimeInterval = 3 * 24 * 60 * 60
@@ -33,21 +34,11 @@ final class Gatekeeper: ObservableObject {
 
     init(
         configService: ConfigService = ConfigService(),
-        attributionStore: AttributionDataStore = .shared,
         pushTokenStore: PushTokenStore = .shared
     ) {
         self.configService = configService
-        self.attributionStore = attributionStore
         self.pushTokenStore = pushTokenStore
         self.pushToken = pushTokenStore.token
-
-        attributionStore.$conversionData
-            .combineLatest(attributionStore.$deepLinkData, attributionStore.$appsFlyerId)
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .sink { [weak self] _, _, _ in
-                Task { await self?.refreshConfig() }
-            }
-            .store(in: &cancellables)
 
         pushTokenStore.$token
             .removeDuplicates()
@@ -55,6 +46,12 @@ final class Gatekeeper: ObservableObject {
                 guard let self else { return }
                 self.pushToken = token
                 Task { await self.refreshConfig() }
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .remoteNotificationURLReceived)
+            .sink { [weak self] _ in
+                self?.openPendingNotificationURLIfNeeded()
             }
             .store(in: &cancellables)
     }
@@ -68,12 +65,21 @@ final class Gatekeeper: ObservableObject {
     func restart() {
         loadingError = false
         route = .loading
+        isUsingNotificationURL = false
         Task { await refreshConfig() }
     }
 
     func refreshConfig() async {
         loadingError = false
         let loadStart = Date()
+
+        if isUsingNotificationURL {
+            return
+        }
+
+        if openPendingNotificationURLIfNeeded() {
+            return
+        }
 
         do {
             let response = try await configService.fetchConfig(storeId: storeId, pushToken: pushToken, firebaseProjectId: firebaseProjectId)
@@ -117,12 +123,13 @@ final class Gatekeeper: ObservableObject {
                     } else {
                         self.setNotificationPromptCooldown()
                     }
+                    self.route = .web(url)
                 }
             }
         } else {
             setNotificationPromptCooldown()
+            route = .web(url)
         }
-        route = .web(url)
     }
 
     private func ensureMinimumLoadingDuration(since start: Date) async {
@@ -197,7 +204,6 @@ final class Gatekeeper: ObservableObject {
     private func appendDeepLinkParams(to url: URL) -> URL {
         guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return url }
         var items = components.queryItems ?? []
-        let attribution = attributionStore.attributionData
 
         func hasItem(named name: String) -> Bool {
             items.contains { $0.name == name }
@@ -215,101 +221,6 @@ final class Gatekeeper: ObservableObject {
             }
         }
 
-        func firstValue(for keys: [String]) -> Any? {
-            for key in keys {
-                if let value = attribution[key] {
-                    switch value {
-                    case let string as String where string.isEmpty == false:
-                        return string
-                    case let number as NSNumber:
-                        return number
-                    default:
-                        continue
-                    }
-                }
-            }
-            return nil
-        }
-
-        // sub_id mapping (AppsFlyer af_sub*)
-        let subIdMappings: [(name: String, keys: [String])] = [
-            ("sub_id_1", ["sub_id_1", "af_sub1"]),
-            ("sub_id_2", ["sub_id_2", "af_sub2"]),
-            ("sub_id_3", ["sub_id_3", "af_sub3"]),
-            ("sub_id_4", ["sub_id_4", "af_sub4"]),
-            ("sub_id_5", ["sub_id_5", "af_sub5"])
-        ]
-
-        for mapping in subIdMappings {
-            if let value = firstValue(for: mapping.keys) {
-                addItem(name: mapping.name, value: value)
-            }
-        }
-
-        // Fallback for sub_id_5: store id if still missing.
-        if hasItem(named: "sub_id_5") == false, let storeId {
-            addItem(name: "sub_id_5", value: storeId)
-        }
-
-        // deep link fields
-        if let value = firstValue(for: ["deep_link_value"]) {
-            addItem(name: "deep_link_value", value: value)
-        }
-
-        if hasItem(named: "deep_link_sub1") == false {
-            let subs: [Any?] = [
-                firstValue(for: ["deep_link_sub1"]),
-                firstValue(for: ["deep_link_sub2"]),
-                firstValue(for: ["deep_link_sub3"]),
-                firstValue(for: ["deep_link_sub4"]),
-                firstValue(for: ["deep_link_sub5"])
-            ]
-            if let firstSub = subs.compactMap({ $0 }).first {
-                addItem(name: "deep_link_sub1", value: firstSub)
-            }
-        }
-
-        // extra_param_7 bundle (af_id & campaign info)
-        if hasItem(named: "extra_param_7") == false {
-            let afId = firstValue(for: ["af_id"]) ?? attributionStore.appsFlyerId ?? attributionStore.ensureAppsFlyerId()
-            let agency = firstValue(for: ["agency"])
-            let campaign = firstValue(for: ["campaign"])
-            let campaignId = firstValue(for: ["campaign_id"])
-            let mediaSource = firstValue(for: ["media_source"])
-
-            let parts: [(String, Any?)] = [
-                ("af_id", afId),
-                ("agency", agency),
-                ("campaign", campaign),
-                ("campaign_id", campaignId),
-                ("media_source", mediaSource)
-            ]
-
-            let filled = parts.compactMap { key, value -> String? in
-                guard let value else { return nil }
-                let stringValue: String
-                switch value {
-                case let str as String: stringValue = str
-                case let number as NSNumber: stringValue = number.stringValue
-                default: return nil
-                }
-                return "\(key)=\(stringValue)"
-            }
-
-            if filled.isEmpty == false {
-                let composed = filled.joined(separator: "&")
-                addItem(name: "extra_param_7", value: composed)
-            }
-        }
-
-        // Fallback: pass through all string/number attribution params as query if missing.
-        for (key, value) in attribution {
-            addItem(name: key, value: value)
-        }
-
-        // Client-side extra params to mirror request body for tester pages.
-        let resolvedAfId = attributionStore.appsFlyerId ?? attributionStore.ensureAppsFlyerId()
-        addItem(name: "af_id", value: resolvedAfId)
         if let bundleId = Bundle.main.bundleIdentifier {
             addItem(name: "bundle_id", value: bundleId)
         }
@@ -325,5 +236,13 @@ final class Gatekeeper: ObservableObject {
         guard items.isEmpty == false else { return url }
         components.queryItems = items
         return components.url ?? url
+    }
+
+    @discardableResult
+    private func openPendingNotificationURLIfNeeded() -> Bool {
+        guard let notificationURL = notificationLinkStore.consume() else { return false }
+        route = .web(notificationURL)
+        isUsingNotificationURL = true
+        return true
     }
 }

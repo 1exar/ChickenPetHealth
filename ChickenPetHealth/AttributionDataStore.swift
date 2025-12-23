@@ -1,20 +1,18 @@
 import Foundation
 import Combine
 
-/// Stores the latest attribution data gathered from AppsFlyer (or any future provider).
-/// These fields stay extremely lightweight so we can ship the gray gate quickly without the SDK.
+/// Stores attribution payload we send to the config endpoint. With AppsFlyer SDK removed, this keeps a stable af_id and leaves other fields empty.
 final class AttributionDataStore: ObservableObject {
     static let shared = AttributionDataStore()
     private let appsFlyerIdKey = "AttributionDataStore.appsFlyerId"
 
-    /// Raw conversion data from AppsFlyer callback.
+    /// Raw conversion data (if ever provided externally).
     @Published private(set) var conversionData: [String: Any] = [:]
 
-    /// Raw unified deep link payload from AppsFlyer.
+    /// Raw deep link payload (if ever provided externally).
     @Published private(set) var deepLinkData: [String: Any] = [:]
 
     /// Merged attribution payload for outgoing requests.
-    /// If a key is present in multiple sources, the first received value wins.
     @Published private(set) var attributionData: [String: Any] = [:]
 
     /// AppsFlyer installation identifier (af_id).
@@ -47,7 +45,7 @@ final class AttributionDataStore: ObservableObject {
         }
     }
 
-    /// Returns an existing AF id or generates a unique, persisted fallback to keep notification flows working when the SDK is absent.
+    /// Returns an existing AF id or generates a unique, persisted fallback.
     func ensureAppsFlyerId() -> String {
         if let current = appsFlyerId, current.isEmpty == false {
             return current
