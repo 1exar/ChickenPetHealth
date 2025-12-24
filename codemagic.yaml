@@ -44,22 +44,23 @@ workflows:
           ARCHIVE_PATH="$CM_BUILD_DIR/build/ios/xcarchive/$XCODE_SCHEME.xcarchive"
           EXPORT_PATH="$CM_BUILD_DIR/build/ios/ipa"
           mkdir -p "$EXPORT_PATH"
+          EXPORT_OPTIONS_PLIST="$CM_BUILD_DIR/exportOptions.plist"
+          cat > "$EXPORT_OPTIONS_PLIST" <<'EOF'
+          {
+            "method": "app-store",
+            "uploadSymbols": true,
+            "compileBitcode": false,
+            "provisioningProfiles": {
+              "com.birdcarelog.app": "match AppStore com.birdcarelog.app",
+              "com.birdcarelog.app.NotificationService": "match AppStore com.birdcarelog.app.NotificationService"
+            }
+          }
+          EOF
           xcodebuild \
             -exportArchive \
             -archivePath "$ARCHIVE_PATH" \
             -exportPath "$EXPORT_PATH" \
-            -exportOptionsPlist <(cat <<'EOF'
-            {
-              "method": "app-store",
-              "uploadSymbols": true,
-              "compileBitcode": false,
-              "provisioningProfiles": {
-                "com.birdcarelog.app": "match AppStore com.birdcarelog.app",
-                "com.birdcarelog.app.NotificationService": "match AppStore com.birdcarelog.app.NotificationService"
-              }
-            }
-          EOF
-            )
+            -exportOptionsPlist "$EXPORT_OPTIONS_PLIST"
 
     artifacts:
       - build/ios/ipa/*.ipa
