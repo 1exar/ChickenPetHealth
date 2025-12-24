@@ -46,25 +46,25 @@ workflows:
           mkdir -p "$EXPORT_PATH"
           EXPORT_OPTIONS_PLIST="$CM_BUILD_DIR/exportOptions.plist"
           cat > "$EXPORT_OPTIONS_PLIST" <<'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>method</key>
-  <string>app-store</string>
-  <key>uploadSymbols</key>
-  <true/>
-  <key>compileBitcode</key>
-  <false/>
-  <key>provisioningProfiles</key>
-  <dict>
-    <key>com.birdcarelog.app</key>
-    <string>match AppStore com.birdcarelog.app</string>
-    <key>com.birdcarelog.app.NotificationService</key>
-    <string>match AppStore com.birdcarelog.app.NotificationService</string>
-  </dict>
-</dict>
-</plist>
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>uploadSymbols</key>
+            <true/>
+            <key>compileBitcode</key>
+            <false/>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.birdcarelog.app</key>
+              <string>match AppStore com.birdcarelog.app</string>
+              <key>com.birdcarelog.app.NotificationService</key>
+              <string>match AppStore com.birdcarelog.app.NotificationService</string>
+            </dict>
+          </dict>
+          </plist>
 EOF
           xcodebuild \
             -exportArchive \
