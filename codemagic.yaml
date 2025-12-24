@@ -29,12 +29,6 @@ workflows:
       - name: Set up provisioning profiles on Xcode project
         script: xcode-project use-profiles --project "$CM_BUILD_DIR/$XCODE_PROJECT"
 
-      - name: Increment build number
-        script: |
-          cd "$CM_BUILD_DIR"
-          LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
-          agvtool new-version -all 2
-
       - name: Build ipa for distribution
         script: |
           xcode-project build-ipa \
@@ -51,6 +45,6 @@ workflows:
       app_store_connect:
         api_key: $APP_STORE_CONNECT_KEY
         auth: integration
-        submit_to_app_store: true
-        cancel_previous_submissions: true
-        release_type: SCHEDULED
+        submit_to_app_store: false
+        submit_to_testflight: false
+        cancel_previous_submissions: false
