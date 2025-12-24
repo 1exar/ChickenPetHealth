@@ -10,9 +10,7 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifiers:
-          - com.birdcarelog.app
-          - com.birdcarelog.app.NotificationService
+        bundle_identifier: com.birdcarelog.app
       vars:
         XCODE_PROJECT: "ChickenPetHealth.xcodeproj"
         XCODE_SCHEME: "ChickenPetHealth"
