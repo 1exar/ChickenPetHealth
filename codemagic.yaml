@@ -53,6 +53,7 @@ workflows:
           /usr/libexec/PlistBuddy -c "Clear dict" "$EXPORT_OPTIONS_PLIST" 2>/dev/null || true
           /usr/libexec/PlistBuddy -c "Add :method string app-store-connect" "$EXPORT_OPTIONS_PLIST"
           /usr/libexec/PlistBuddy -c "Add :teamID string FCZ52J5UNT" "$EXPORT_OPTIONS_PLIST"
+          /usr/libexec/PlistBuddy -c "Add :signingStyle string automatic" "$EXPORT_OPTIONS_PLIST"
           /usr/libexec/PlistBuddy -c "Add :uploadSymbols bool true" "$EXPORT_OPTIONS_PLIST"
           /usr/libexec/PlistBuddy -c "Add :compileBitcode bool false" "$EXPORT_OPTIONS_PLIST"
           xcodebuild \
@@ -60,7 +61,8 @@ workflows:
             -archivePath "$ARCHIVE_PATH" \
             -exportPath "$EXPORT_PATH" \
             -exportOptionsPlist "$EXPORT_OPTIONS_PLIST" \
-            -allowProvisioningUpdates
+            -allowProvisioningUpdates \
+            -allowProvisioningDeviceRegistration
 
     artifacts:
       - build/ios/ipa/*.ipa
