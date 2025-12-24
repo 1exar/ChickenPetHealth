@@ -21,21 +21,45 @@ workflows:
       - name: Set up keychain for code signing
         script: |
           keychain initialize
-
-      - name: Add signing certificates to keychain
-        script: |
           keychain add-certificates
 
-      - name: Sync provisioning settings from Codemagic
+      - name: Archive with automatic signing (includes app extension)
         script: |
-          xcode-project use-profiles \
-            --project "$CM_BUILD_DIR/$XCODE_PROJECT"
+          set -euo pipefail
+          PROJECT_PATH="$CM_BUILD_DIR/$XCODE_PROJECT"
+          ARCHIVE_PATH="$CM_BUILD_DIR/build/ios/xcarchive/$XCODE_SCHEME.xcarchive"
+          xcodebuild \
+            -project "$PROJECT_PATH" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Release \
+            -archivePath "$ARCHIVE_PATH" \
+            -allowProvisioningUpdates \
+            -allowProvisioningDeviceRegistration \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            archive
 
-      - name: Build ipa
+      - name: Export ipa
         script: |
-          xcode-project build-ipa \
-            --project "$CM_BUILD_DIR/$XCODE_PROJECT" \
-            --scheme "$XCODE_SCHEME"
+          set -euo pipefail
+          ARCHIVE_PATH="$CM_BUILD_DIR/build/ios/xcarchive/$XCODE_SCHEME.xcarchive"
+          EXPORT_PATH="$CM_BUILD_DIR/build/ios/ipa"
+          mkdir -p "$EXPORT_PATH"
+          xcodebuild \
+            -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportPath "$EXPORT_PATH" \
+            -exportOptionsPlist <(cat <<'EOF'
+            {
+              "method": "app-store",
+              "uploadSymbols": true,
+              "compileBitcode": false,
+              "provisioningProfiles": {
+                "com.birdcarelog.app": "match AppStore com.birdcarelog.app",
+                "com.birdcarelog.app.NotificationService": "match AppStore com.birdcarelog.app.NotificationService"
+              }
+            }
+          EOF
+            )
 
     artifacts:
       - build/ios/ipa/*.ipa
