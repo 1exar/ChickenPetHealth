@@ -14,6 +14,31 @@ enum ConfigServiceError: Error {
 final class ConfigService {
     private let endpointString = "https://birrdheallth.com/config.php"
     private let attributionStore: AttributionDataStore
+    /// Static payload used when real AppsFlyer data is unavailable (e.g. simulator/testing).
+    private let testAttributionPayload: [String: Any] = [
+        "af_status": "Non-organic",
+        "media_source": "Facebook Ads",
+        "campaign": "Test_Campaign",
+        "campaign_id": "6068535534218",
+        "adset": "s1s3",
+        "adset_id": "6073532011618",
+        "adgroup": "s1s3",
+        "adgroup_id": "6073532011418",
+        "is_first_launch": true,
+        "is_paid": true,
+        "click_time": "2017-07-18 12:55:05",
+        "install_time": "2017-07-19 08:06:56.189",
+        "af_sub1": "439223",
+        "af_sub2": "demo",
+        "af_sub3": "demo",
+        "af_sub4": "01",
+        "af_sub5": "demo",
+        "match_type": "probabilistic",
+        "deep_link_value": "test_deep_link_value",
+        "deep_link_sub1": "test_sub_value",
+        "is_deferred": true,
+        "timestamp": "2022-12-06T11:47:40.037"
+    ]
 
     init(attributionStore: AttributionDataStore = .shared) {
         self.attributionStore = attributionStore
@@ -45,6 +70,9 @@ final class ConfigService {
 
     private func buildRequestBody(storeId: String?, pushToken: String?, firebaseProjectId: String?) -> Data? {
         var payload: [String: Any] = sanitized(attributionStore.attributionData)
+        if payload.isEmpty {
+            payload = testAttributionPayload
+        }
 
         let afId = attributionStore.ensureAppsFlyerId()
         payload["af_id"] = afId

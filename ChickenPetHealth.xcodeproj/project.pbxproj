@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C6D10AF22F0B7E5C00BDBE1A /* AppsFlyerLib in Frameworks */ = {isa = PBXBuildFile; productRef = C6D10AF12F0B7E5C00BDBE1A /* AppsFlyerLib */; };
 		C6D16CF52EFB3B2E00F3B42D /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = C6D16CF42EFB3B2E00F3B42D /* FirebaseMessaging */; };
 		C6D16CF72EFB3EC800F3B42D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C6D16CF62EFB3EC800F3B42D /* GoogleService-Info.plist */; };
 		C6D170032EFB4C7D00F3B42D /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D170022EFB4C7D00F3B42D /* NotificationService.swift */; };
@@ -66,6 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6D10AF22F0B7E5C00BDBE1A /* AppsFlyerLib in Frameworks */,
 				C6D16CF52EFB3B2E00F3B42D /* FirebaseMessaging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -149,6 +151,7 @@
 			);
 			name = ChickenPetHealth;
 			packageProductDependencies = (
+				C6D10AF12F0B7E5C00BDBE1A /* AppsFlyerLib */,
 				C6D16CF42EFB3B2E00F3B42D /* FirebaseMessaging */,
 			);
 			productName = ChickenPetHealth;
@@ -183,6 +186,7 @@
 			mainGroup = FAAF558E2ED13798005C8564;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				C6D10AF02F0B7E0900BDBE1A /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */,
 				C6D16CF22EFB39B600F3B42D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -248,7 +252,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
@@ -276,7 +280,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
@@ -421,17 +425,19 @@
 		FAAF55A32ED1379A005C8564 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPSFLYER_DEV_KEY = fxSHnri96hoMwze37MFpqn;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
 				CODE_SIGN_ENTITLEMENTS = ChickenPetHealth/ChickenPetHealth.entitlements;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_AppleAppID = id6755790499;
+				INFOPLIST_KEY_AppsFlyerDevKey = "$(APPSFLYER_DEV_KEY)";
 				INFOPLIST_KEY_CFBundleDisplayName = "Bird Care Log";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Allow camera access to capture and upload photos.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow photo library access to choose images to upload.";
@@ -464,17 +470,19 @@
 		FAAF55A42ED1379A005C8564 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPSFLYER_DEV_KEY = fxSHnri96hoMwze37MFpqn;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
 				CODE_SIGN_ENTITLEMENTS = ChickenPetHealth/ChickenPetHealth.entitlements;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_AppleAppID = id6755790499;
+				INFOPLIST_KEY_AppsFlyerDevKey = "$(APPSFLYER_DEV_KEY)";
 				INFOPLIST_KEY_CFBundleDisplayName = "Bird Care Log";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Allow camera access to capture and upload photos.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow photo library access to choose images to upload.";
@@ -537,6 +545,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		C6D10AF02F0B7E0900BDBE1A /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AppsFlyerSDK/AppsFlyerFramework";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.17.8;
+			};
+		};
 		C6D16CF22EFB39B600F3B42D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -548,6 +564,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		C6D10AF12F0B7E5C00BDBE1A /* AppsFlyerLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C6D10AF02F0B7E0900BDBE1A /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */;
+			productName = AppsFlyerLib;
+		};
 		C6D16CF42EFB3B2E00F3B42D /* FirebaseMessaging */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C6D16CF22EFB39B600F3B42D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

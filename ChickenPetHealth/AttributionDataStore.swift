@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-/// Stores attribution payload we send to the config endpoint. With AppsFlyer SDK removed, this keeps a stable af_id and leaves other fields empty.
+/// Stores attribution payload we send to the config endpoint. Populated by AppsFlyer SDK callbacks, with generated fallbacks for testing.
 final class AttributionDataStore: ObservableObject {
     static let shared = AttributionDataStore()
     private let appsFlyerIdKey = "AttributionDataStore.appsFlyerId"
