@@ -172,5 +172,6 @@ private struct NotificationPromptView: View {
                 .ignoresSafeArea()
             }
         }
+        .ignoresSafeArea()
     }
 }
